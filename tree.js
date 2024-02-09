@@ -14,6 +14,49 @@ module.exports = class Tree {
     this._root = newRoot;
   }
 
+  // Builds new tree from array
+buildTree(newArray) {
+    if (newArray.length === 0) {
+      return null;
+    }
+  
+    newArray = newArray.filter(
+      (value, index) => newArray.indexOf(value) === index
+    ); 
+    newArray = newArray.sort((a, b ) => a - b); 
+  
+    const mid = Math.floor(newArray.length / 2);
+    const root = new Node(newArray[mid]);
+  
+    // initializing queue
+    const q = [
+      [root, [0, mid - 1]],
+      [root, [mid + 1, newArray.length - 1]],
+    ];
+  
+    while (q.length > 0) {
+      const [parent, [left, right]] = q.shift();
+  
+      // if there are elements to process and parent node is not NULL
+      if (left <= right && parent != null) {
+        const mid = Math.floor((left + right) / 2);
+        const child = new Node(newArray[mid]);
+  
+        // set the child node as left or right child of the parent node
+        if (newArray[mid] < parent.val) {
+          parent.left = child;
+        } else {
+          parent.right = child;
+        }
+  
+        // push the left and right child and their indices to the queue
+        q.push([child, [left, mid - 1]]);
+        q.push([child, [mid + 1, right]]);
+      }
+    }
+    this._root = root;
+  }
+
   insert(value, leaf = this._root) {
     if (value < leaf.val && leaf.left === null) {
       const newNode = new Node(value);
@@ -158,8 +201,8 @@ module.exports = class Tree {
             if(rightChild){
                 queue.push(rightChild);
             }
-       
-            queue2.push(queue.shift());
+            const newValue = queue.shift()
+            queue2.push(newValue.val);
         };
         
         return queue2;
@@ -196,11 +239,11 @@ module.exports = class Tree {
             if(rightChild){
                 queue.push(rightChild);
             }
-    
-            queue2.push(queue.shift());
+            const newValue = queue.shift()
+            queue2.push(newValue.val);
     
             if(!queue.length && leftSide){
-                queue2.push(this._root)
+                queue2.push(this._root.val)
                 queue.push(this._root.right)
                 leftSide = false;
             }
@@ -231,7 +274,7 @@ module.exports = class Tree {
 
   preOrder(callback){
     const queue = [this._root.left];
-    const queue2 = [this._root];
+    const queue2 = [this._root.val];
     let leftSide = true;
 
     if(!callback){
@@ -245,8 +288,8 @@ module.exports = class Tree {
             if(rightChild){
                 queue.push(rightChild);
             }
-    
-            queue2.push(queue.shift());
+            const newValue = queue.shift()
+            queue2.push(newValue.val);
     
             if(!queue.length && leftSide){
                 queue.push(this._root.right)
@@ -293,15 +336,15 @@ module.exports = class Tree {
             if(rightChild){
                 queue.push(rightChild);
             }
-    
-            queue2.push(queue.shift());
+            const newValue = queue.shift()
+            queue2.push(newValue.val);
     
             if(!queue.length && leftSide){
                 queue.push(this._root.right)
                 leftSide = false;
             }
         } 
-        queue2.push(this._root)
+        queue2.push(this._root.val)
         return queue2;
     }
     
@@ -327,7 +370,15 @@ module.exports = class Tree {
     callback(this._root)
   }
 
-  height(node, currentNode=null, height){
+  height(node, height=0){
+    if(!node){
+        return 0;
+    }
+
+    const leftHeight = this.height(node.left);
+    const rightHeight = this.height(node.right)
+
+    return Math.max(leftHeight, rightHeight)+1;
   }
 
   depth(node, currentNode = this._root,depth=0){
@@ -345,6 +396,18 @@ module.exports = class Tree {
   }
 
   isBalanced(){
+    if(this.height(this._root.left) === this.height(this._root.right)){
+        return true
+    }
+    return false;
   }
 
+  rebalance(){
+    const newList = this.inOrder();
+    this.buildTree(newList);
+ };
+ 
+
 };
+
+
