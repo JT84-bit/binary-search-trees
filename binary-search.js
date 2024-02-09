@@ -64,8 +64,16 @@ const prettyPrint = (node, prefix = "", isLeft = true) => {
   }
 };
 
+// <<<<<------>>>>
+
+const printValue = (node) => {
+    console.log(node.val)
+}
+
+newTree.postOrder(printValue);
+console.log(newTree.postOrder());
 prettyPrint(newTree.root);
-console.log(newTree.depth(newTree.find(12)))
+
 
 
 

@@ -143,7 +143,188 @@ module.exports = class Tree {
   }
 
   levelOrder(callback){
+    const queue = [this._root];
+    const queue2 = [];
 
+    if(!callback){
+        
+        while(queue.length > 0){
+            const leftChild = queue[0].left;
+            const rightChild = queue[0].right;
+            if(leftChild){
+                queue.push(leftChild);
+            }
+    
+            if(rightChild){
+                queue.push(rightChild);
+            }
+       
+            queue2.push(queue.shift());
+        };
+        
+        return queue2;
+    }
+
+    while(queue.length > 0){
+        const leftChild = queue[0].left;
+        const rightChild = queue[0].right;
+        if(leftChild){
+            queue.push(leftChild);
+        }
+
+        if(rightChild){
+            queue.push(rightChild);
+        }
+
+        callback(queue.shift());
+    }
+  }
+
+  inOrder(callback){
+    const queue = [this._root.left];
+    const queue2 = [];
+    let leftSide = true;
+
+    if(!callback){
+        while(queue.length > 0){
+            const leftChild = queue[0].left;
+            const rightChild = queue[0].right;
+            if(leftChild){
+                queue.push(leftChild);
+            }
+    
+            if(rightChild){
+                queue.push(rightChild);
+            }
+    
+            queue2.push(queue.shift());
+    
+            if(!queue.length && leftSide){
+                queue2.push(this._root)
+                queue.push(this._root.right)
+                leftSide = false;
+            }
+        } 
+        return queue2;
+    }
+
+    while(queue.length > 0){
+        const leftChild = queue[0].left;
+        const rightChild = queue[0].right;
+        if(leftChild){
+            queue.push(leftChild);
+        }
+
+        if(rightChild){
+            queue.push(rightChild);
+        }
+
+        callback(queue.shift());
+
+        if(!queue.length && leftSide){
+            callback(this._root)
+            queue.push(this._root.right)
+            leftSide = false;
+        }
+    }
+  }
+
+  preOrder(callback){
+    const queue = [this._root.left];
+    const queue2 = [this._root];
+    let leftSide = true;
+
+    if(!callback){
+        while(queue.length > 0){
+            const leftChild = queue[0].left;
+            const rightChild = queue[0].right;
+            if(leftChild){
+                queue.push(leftChild);
+            }
+    
+            if(rightChild){
+                queue.push(rightChild);
+            }
+    
+            queue2.push(queue.shift());
+    
+            if(!queue.length && leftSide){
+                queue.push(this._root.right)
+                leftSide = false;
+            }
+        } 
+        return queue2;
+    }
+    callback(this._root)
+    while(queue.length > 0){
+        const leftChild = queue[0].left;
+        const rightChild = queue[0].right;
+        
+        if(leftChild){
+            queue.push(leftChild);
+        }
+
+        if(rightChild){
+            queue.push(rightChild);
+        }
+
+        callback(queue.shift());
+
+        if(!queue.length && leftSide){
+            queue.push(this._root.right)
+            leftSide = false;
+        }
+    }
+  }
+
+  postOrder(callback){
+    const queue = [this._root.left];
+    const queue2 = [];
+    let leftSide = true;
+
+    if(!callback){
+        while(queue.length > 0){
+            const leftChild = queue[0].left;
+            const rightChild = queue[0].right;
+            if(leftChild){
+                queue.push(leftChild);
+            }
+    
+            if(rightChild){
+                queue.push(rightChild);
+            }
+    
+            queue2.push(queue.shift());
+    
+            if(!queue.length && leftSide){
+                queue.push(this._root.right)
+                leftSide = false;
+            }
+        } 
+        queue2.push(this._root)
+        return queue2;
+    }
+    
+    while(queue.length > 0){
+        const leftChild = queue[0].left;
+        const rightChild = queue[0].right;
+        
+        if(leftChild){
+            queue.push(leftChild);
+        }
+
+        if(rightChild){
+            queue.push(rightChild);
+        }
+
+        callback(queue.shift());
+
+        if(!queue.length && leftSide){
+            queue.push(this._root.right)
+            leftSide = false;
+        }
+    }
+    callback(this._root)
   }
 
   height(node, currentNode=null, height){
